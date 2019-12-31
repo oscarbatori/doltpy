@@ -189,9 +189,9 @@ class Dolt(object):
             clean = data.dropna(subset=primary_keys)
             clean.to_csv(filepath, index=False)
 
-        self._import_helper(table_name, writer, primary_keys, self._resolve_import_mode(import_mode, table_name))
+        self._import_helper(table_name, writer, primary_keys, self.resolve_import_mode(import_mode, table_name))
 
-    def _resolve_import_mode(self, import_mode, table_name):
+    def resolve_import_mode(self, import_mode, table_name):
         return import_mode or (UPDATE if table_name in self.get_existing_tables() else CREATE)
 
     def bulk_import(self,
@@ -211,7 +211,7 @@ class Dolt(object):
             with open(filepath, 'w') as f:
                 f.writelines(data.readlines())
 
-        self._import_helper(table_name, writer, primary_keys, self._resolve_import_mode(import_mode, table_name))
+        self._import_helper(table_name, writer, primary_keys, self.resolve_import_mode(import_mode, table_name))
 
     def _import_helper(self,
                        table_name: str,

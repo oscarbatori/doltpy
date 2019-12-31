@@ -127,11 +127,14 @@ def get_table_transfomer(get_data: Callable[[Dolt], pd.DataFrame],
                          target_table: str,
                          target_pk_cols: List[str],
                          transformer: DataframeTransformer,
-                         import_mode: str = CREATE) -> DoltTableWriter:
+                         import_mode: str = None) -> DoltTableWriter:
     def inner(repo: Dolt):
         input_data = get_data(repo)
         transformed_data = transformer(input_data)
-        repo.import_df(target_table, transformed_data, target_pk_cols, import_mode=import_mode)
+        repo.import_df(target_table,
+                       transformed_data,
+                       target_pk_cols,
+                       import_mode=repo.resolve_import_mode(import_mode, target_table))
         return target_table
 
     return inner
