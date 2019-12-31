@@ -72,7 +72,8 @@ class Dolt(object):
         if is_global:
             args.append("--global")
         elif not self.dir_exists:
-            raise Exception("{} does not exist.  Cannot configure local options without a valid directory.".format(self.repo_dir))
+            msg = "{} does not exist. Cannot configure local options without a valid directory.".format(self.repo_dir)
+            raise Exception(msg)
 
         name_args = args
         email_args = args.copy()
@@ -188,8 +189,10 @@ class Dolt(object):
             clean = data.dropna(subset=primary_keys)
             clean.to_csv(filepath, index=False)
 
-        import_mode = import_mode or (UPDATE if table_name in self.get_existing_tables() else CREATE)
-        self._import_helper(table_name, writer, primary_keys, import_mode)
+        self._import_helper(table_name, writer, primary_keys, self._resolve_import_mode(import_mode, table_name))
+
+    def _resolve_import_mode(self, import_mode, table_name):
+        return import_mode or (UPDATE if table_name in self.get_existing_tables() else CREATE)
 
     def bulk_import(self,
                     table_name: str,
@@ -208,7 +211,7 @@ class Dolt(object):
             with open(filepath, 'w') as f:
                 f.writelines(data.readlines())
 
-        self._import_helper(table_name, writer, primary_keys, import_mode)
+        self._import_helper(table_name, writer, primary_keys, self._resolve_import_mode(import_mode, table_name))
 
     def _import_helper(self,
                        table_name: str,
@@ -220,8 +223,8 @@ class Dolt(object):
         import_flags = IMPORT_MODES_TO_FLAGS[import_mode]
 
         logger.info('Importing to table {} in dolt directory located in {}, import mode {}'.format(table_name,
-                                                                                                    self.repo_dir,
-                                                                                                    import_mode))
+                                                                                                   self.repo_dir,
+                                                                                                   import_mode))
         fp = tempfile.NamedTemporaryFile(suffix='.csv')
         write_import_file(fp.name)
         args = ['dolt', 'table', 'import', table_name, '--pk={}'.format(','.join(primary_keys))] + import_flags
