@@ -39,7 +39,7 @@ def _populate_derived_data_helper(repo: Dolt, import_mode: str):
 
 @pytest.fixture
 def initial_test_data(init_repo):
-    return _populate_test_data_helper(init_repo, INITIAL_MENS, INITIAL_WOMENS)
+    return _populate_test_data_helper(init_repo(), INITIAL_MENS, INITIAL_WOMENS)
 
 
 @pytest.fixture
@@ -98,7 +98,7 @@ def test_table_transfomer_update(update_derived_data):
 
 
 def test_insert_unique_key(init_repo):
-    repo = init_repo
+    repo = init_repo()
 
     def generate_data():
         return pd.DataFrame({'id': [1, 1, 2], 'value': ['foo', 'foo', 'baz']})
@@ -168,7 +168,7 @@ Gustavo Kuerten,43
 
 
 def test_get_bulk_table_loader(init_repo):
-    repo = init_repo
+    repo = init_repo()
     table = 'test_table'
 
     def get_data():

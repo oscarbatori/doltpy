@@ -5,6 +5,7 @@ import pandas as pd
 import hashlib
 import importlib
 import logging
+from doltpy.core.dolt import CREATE, UPDATE
 
 DoltTableWriter = Callable[[Dolt], str]
 DoltLoader = Callable[[Dolt], str]
@@ -91,7 +92,7 @@ def get_bulk_table_writer(table: str,
     :return:
     """
     def inner(repo: Dolt):
-        _import_mode = import_mode or ('create' if table not in repo.get_existing_tables() else 'update')
+        _import_mode = import_mode or (CREATE if table not in repo.get_existing_tables() else UPDATE)
         data_to_load = _apply_file_transformers(get_data(), transformers)
         repo.bulk_import(table, data_to_load, pk_cols, import_mode=_import_mode)
         return table
@@ -114,7 +115,7 @@ def get_df_table_writer(table: str,
     :return:
     """
     def inner(repo: Dolt):
-        _import_mode = import_mode or ('create' if table not in repo.get_existing_tables() else 'update')
+        _import_mode = import_mode or (CREATE if table not in repo.get_existing_tables() else UPDATE)
         data_to_load = _apply_df_transformers(get_data(), transformers)
         repo.import_df(table, data_to_load, pk_cols, import_mode=_import_mode)
         return table
@@ -126,7 +127,7 @@ def get_table_transfomer(get_data: Callable[[Dolt], pd.DataFrame],
                          target_table: str,
                          target_pk_cols: List[str],
                          transformer: DataframeTransformer,
-                         import_mode: str = UPDATE) -> DoltTableWriter:
+                         import_mode: str = CREATE) -> DoltTableWriter:
     def inner(repo: Dolt):
         input_data = get_data(repo)
         transformed_data = transformer(input_data)

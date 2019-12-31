@@ -173,7 +173,7 @@ class Dolt(object):
                   table_name: str,
                   data: pd.DataFrame,
                   primary_keys: List[str],
-                  import_mode: str = CREATE):
+                  import_mode: str = None):
         """
         Imports the given DataFrame object to the specified table, dropping records that are duplicates on primary key
         (in order, preserving the first record, something we might want to allow the user to sepcify), subject to
@@ -188,6 +188,7 @@ class Dolt(object):
             clean = data.dropna(subset=primary_keys)
             clean.to_csv(filepath, index=False)
 
+        import_mode = import_mode or (UPDATE if table_name in self.get_existing_tables() else CREATE)
         self._import_helper(table_name, writer, primary_keys, import_mode)
 
     def bulk_import(self,

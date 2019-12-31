@@ -18,7 +18,7 @@ def create_test_data(tmp_path) -> str:
 
 @pytest.fixture
 def create_test_table(init_repo, create_test_data) -> Tuple[Dolt, str]:
-    repo, test_data_path = init_repo, create_test_data
+    repo, test_data_path = init_repo(), create_test_data
     repo.import_df('test_players', pd.read_csv(test_data_path), ['id'])
     yield repo, 'test_players'
     _execute(['dolt', 'table', 'rm', 'test_players'], repo.repo_dir)
@@ -26,7 +26,7 @@ def create_test_table(init_repo, create_test_data) -> Tuple[Dolt, str]:
 
 @pytest.fixture
 def run_serve_mode(init_repo):
-    repo = init_repo
+    repo = init_repo()
     repo.start_server()
     yield
     repo.stop_server()
