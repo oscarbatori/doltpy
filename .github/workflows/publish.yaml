@@ -21,10 +21,12 @@ jobs:
       run: |
         python setup.py sdist
     - name: Publish Doltpy to PyPI
-      uses: pypa/gh-action-pypi-publish@master
-      with:
-        user: DoltHub
-        password: ${{ secrets.pypi_password }}
+      # uses: pypa/gh-action-pypi-publish@master
+      # with:
+      #   user: DoltHub
+      #   password: ${{ secrets.pypi_password }}
+      run: |
+        echo "Test process"
 
   notify:
     needs: publish
