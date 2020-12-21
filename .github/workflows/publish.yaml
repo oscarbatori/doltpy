@@ -20,7 +20,7 @@ jobs:
         run: |
           git config --global user.name doltpy-release-bot
           git config --global user.email doltpy-release-bot@dolthub.com
-          ./.github/scripts/prepare-release.sh ${{ github.event.inputs.version }}
+          ./.github/scripts/bump-version.sh ${{ github.event.inputs.version }}
 
   publish:
     needs: bump-version
