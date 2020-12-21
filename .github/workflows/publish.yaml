@@ -30,7 +30,12 @@ jobs:
         python_version: ['3.9']
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Checkout release
+      run: |
+        git fetch --tags --all
+        git checkout tags/v${{ github.event.inputs.version }} -b v${{ github.event.inputs.version }}
     - name: Set up Python ${{ matrix.python_version }}
       uses: actions/setup-python@v1
       with:
