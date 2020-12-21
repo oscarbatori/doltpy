@@ -1,11 +1,29 @@
-name: Publish to PyPi
+name: Release
 
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'SemVer format release tag, i.e. 0.23.4'
+        required: true
 
 jobs:
+
+  bump-version:
+    name: Bump Version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Bump Version
+        id: bump-version
+        run: |
+          git config --global user.name doltpy-release-bot
+          git config --global user.email doltpy-release-bot@dolthub.com
+          ./github/scripts/prepare-release.sh ${{ github.event.inputs.version }}
+
   publish:
+    needs: bump-version
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -27,22 +45,43 @@ jobs:
       #   password: ${{ secrets.pypi_password }}
       run: |
         echo "Test process"
-
-  notify:
-    needs: publish
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Get the version
-      id: get_version
-      # GITHUB_REF is expected to be set in the format refs/tags/0.3.1
-      run: echo "::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}"
-    - name: Discord Notification
-      uses: rjstone/discord-webhook-notify@v1
-      with:
-        severity: info
-        username: GhostOfOctacat
-        color: '#ff00aa'
-        avatarUrl: https://github.githubassets.com/images/modules/logos_page/Octocat.png
-        description: "${{format('Doltpy {0}', steps.get_version.outputs.VERSION)}} pushed to PyPi"
-        webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+    - name: Test Success
+        uses: rjstone/discord-webhook-notify@v1
+        if: success()
+        with:
+            severity: info
+            details: Test Succeeded!
+            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+    - name: Test Failure
+        uses: rjstone/discord-webhook-notify@v1
+        if: failure()
+        with:
+            severity: error
+            details: Test Failed!
+            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+    - name: Test Cancelled
+        uses: rjstone/discord-webhook-notify@v1
+        if: cancelled()
+        with:
+            severity: warn
+            details: Test Cancelled!
+            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+  #
+  # notify:
+  #   needs: publish
+  #   runs-on: ubuntu-latest
+  #
+  #   steps:
+  #   - name: Get the version
+  #     id: get_version
+  #     # GITHUB_REF is expected to be set in the format refs/tags/0.3.1
+  #     run: echo "::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}"
+  #   - name: Discord Notification
+  #     uses: rjstone/discord-webhook-notify@v1
+  #     with:
+  #       severity: info
+  #       username: GhostOfOctacat
+  #       color: '#ff00aa'
+  #       avatarUrl: https://github.githubassets.com/images/modules/logos_page/Octocat.png
+  #       description: "${{format('Doltpy {0}', steps.get_version.outputs.VERSION)}} pushed to PyPi"
+  #       webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
