@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 VERSION = "1.1.7"
 
 setup(name='doltpy',
-      version=VERSION,
+      version=version,
       packages=find_packages(),
       install_requires=['pandas>=1.0.5',
                         'mysql-connector-python==8.0.20',
