@@ -21,8 +21,10 @@ jobs:
           version-string: ${{ github.event.inputs.version }}
           version-file: setup.py
       - name: Discord Notify
+        if: always()
         uses: dolthub/ga-discord-notify@master
         with:
+          job-status: ${{ job.status }}
           webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
           notify-on-success: false
 
@@ -55,7 +57,9 @@ jobs:
       run: |
         echo "Test process"
     - name: Discord Notify
+      if: always()
       uses: dolthub/ga-discord-notify@master
       with:
+        job-status: ${{ job.status }}
         webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
         notify-on-success: false
