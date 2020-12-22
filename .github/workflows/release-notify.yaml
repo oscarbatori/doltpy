@@ -7,7 +7,7 @@ jobs:
     name: Release Notification
     steps:
       - name: Send Discord Notification
-        uses: dolthub/ga-discord-notify
+        uses: dolthub/ga-discord-notify@master
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
           notify-on-success: true

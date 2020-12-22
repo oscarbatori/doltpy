@@ -16,15 +16,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Bump Version
-        uses: dolthub/ga-bump-version@v2
+        uses: dolthub/ga-bump-version@master
         with:
           version-string: ${{ github.event.inputs.version }}
           version-file: setup.py
       - name: Discord Notify
-          uses: dolthub/ga-discord-notify
-          with:
-            webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
-            notify-on-success: false
+        uses: dolthub/ga-discord-notify
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          notify-on-success: false
 
   publish:
     needs: bump-version
@@ -55,7 +55,7 @@ jobs:
       run: |
         echo "Test process"
     - name: Discord Notify
-        uses: dolthub/ga-discord-notify@master
-        with:
-          webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
-          notify-on-success: false
+      uses: dolthub/ga-discord-notify@master
+      with:
+        webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+        notify-on-success: false
