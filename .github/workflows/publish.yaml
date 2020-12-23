@@ -16,7 +16,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Bump Version
-        uses: dolthub/ga-bump-version@master
+        uses: dolthub/ga-bump-version@test-github-context
         with:
           version-string: ${{ github.event.inputs.version }}
           version-file: setup.py
@@ -58,7 +58,7 @@ jobs:
         echo "Test process"
     - name: Discord Notify
       if: always()
-      uses: dolthub/ga-discord-notify@master
+      uses: dolthub/ga-discord-notify@test-github-context
       with:
         job-status: ${{ job.status }}
         webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
