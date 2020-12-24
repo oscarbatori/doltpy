@@ -130,7 +130,7 @@ def test_merge_conflict(create_test_table):
     head_of_master = commits[0]
 
     assert head_of_master.message == message_two
-    
+
 
 
 def test_dolt_log(create_test_table):
