@@ -22,7 +22,7 @@ jobs:
           version-file: setup.py
       - name: Discord Notify
         if: always()
-        uses: dolthub/ga-discord-notify@test-github-context
+        uses: dolthub/ga-discord-notify@master
         with:
           job-status: ${{ job.status }}
           webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python_version: ['3.9']
+        python-version: ['3.9']
 
     steps:
     - name: Checkout code
@@ -50,15 +50,13 @@ jobs:
       run: |
         python setup.py sdist
     - name: Publish Doltpy to PyPI
-      # uses: pypa/gh-action-pypi-publish@master
-      # with:
-      #   user: DoltHub
-      #   password: ${{ secrets.pypi_password }}
-      run: |
-        echo "Test process"
+      uses: pypa/gh-action-pypi-publish@master
+      with:
+        user: DoltHub
+        password: ${{ secrets.pypi_password }}
     - name: Discord Notify
       if: always()
-      uses: dolthub/ga-discord-notify@test-github-context
+      uses: dolthub/ga-discord-notify@master
       with:
         job-status: ${{ job.status }}
         webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
