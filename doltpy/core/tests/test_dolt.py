@@ -133,6 +133,7 @@ def test_merge_conflict(create_test_table):
     assert 1 == 2
 
 
+
 def test_dolt_log(create_test_table):
     repo, test_table = create_test_table
     message_one = 'Julianna, the very serious intellectual'
